@@ -71,13 +71,13 @@ Woo has implemented their own abstract class and several registration/integratio
 
 ### Declaring plugin block compat
 
-Gateway plugins still need to declare block compatibility at the plugin level (same as other block integrations). We can use the same FW methods for this in `Blocks_Handler.php`.
+Gateway plugins still need to declare block compatibility at the plugin level (same as other block integrations). We can use the same FW methods for this in `Blocks_Handler.php` [code](https://github.com/godaddy-wordpress/wc-plugin-framework/blob/release/cart-checkout-blocks-support/woocommerce/Blocks/Blocks_Handler.php).
 
 [ Code example of declaration (I think this is just the new plugin constructor args?) ]
 
 ### BE PaymentMethodRegistry
 
-Next you’ll need to add your payment method to Woo’s `PaymentMethodRegistry` to […what does this do specifically?]. We have FW methods for this level of integration in `Gateway_Blocks_Handler.php` . This registration method calls `get_checkout_block_integration_instance()` on the integrating gateway class, which should return your `Gateway_Checkout_Block_Integration` instance (described in the next step).
+Next you’ll need to add your payment method to Woo’s `PaymentMethodRegistry` to […what does this do specifically?]. We have FW methods for this level of integration in `Gateway_Blocks_Handler.php` [code](https://github.com/godaddy-wordpress/wc-plugin-framework/blob/release/cart-checkout-blocks-support/woocommerce/payment-gateway/Blocks/Gateway_Blocks_Handler.php). This registration method calls `get_checkout_block_integration_instance()` on the integrating gateway class, which should return your `Gateway_Checkout_Block_Integration` instance (described in the next step).
 
 `add_action( ‘woocodmmerce_blocks_payment_method_type_registration’ […])`
 
