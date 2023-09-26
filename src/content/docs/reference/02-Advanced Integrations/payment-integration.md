@@ -66,27 +66,97 @@ Woo handles block-compatible payment methods in their `PaymentMethodRegistry` ([
 
 Each integrating gateway should extend the `Gateway_Checkout_Block_Integration` class to provide Woo with the integration details for rendering your FE. This includes the base gateway block checkout scripts and styles to load in an `initialize()`method, as well as the data that should be exposed to those scripts via `get_script_data()`. 
 
+```php
+use SkyVerge\WooCommerce\PluginFramework\v5_11_8\Payment_Gateway\Blocks\Gateway_Checkout_Block_Integration;
+
+/**
+ * Checkout block integration class.
+ */
+class Credit_Card_Checkout_Block_Integration extends Gateway_Checkout_Block_Integration
+{
+
+	/**
+	 * Initializes the block integration.
+	 *
+	 * @internal
+	 *
+	 * @return void
+	 */
+	public function initialize() {
+
+		// register the base checkout block JS for this gateway
+		wp_register_script(
+			$this->get_main_script_handle(),
+			wc_plugin()->get_plugin_url() . '/assets/js/blocks/block-checkout.js',
+			[
+				'wc-blocks-registry',
+				'wc-settings',
+				'wp-element',
+				'wp-html-entities',
+				'wp-i18n',
+			],
+			null, // replace with PLUGIN::VERSION later
+			[
+				// 'strategy' => 'defer' or 'async' (optional)
+				'in_footer' => true,
+			]
+		);
+
+		// register the above script for i18n
+		wp_set_script_translations( $this->get_main_script_handle(), 'woocommerce-gateway-plugin-domain' );
+
+		// enqueue styles for the payment method UI
+		wp_enqueue_block_style('checkout', [
+			'handle' => $this->get_main_script_handle(),
+			'src'    => wc_plugin()->get_plugin_url() . '/assets/css/blocks/block-checkout.css',
+		]);
+	}
+
+	/**
+	 * Gets the payment method data for client exposure.
+	 *
+	 * @return array<string, string>
+	 */
+	public function get_script_data() : array {
+
+		return [
+			'title'       => $this->gateway->method_title,
+			'description' => $this->gateway->method_description,
+			'supports'    => $this->gateway->supports,
+			'my_payment_data' => [
+				'value' => EXAMPLE_DATA1,
+				'value' => EXAMPLE_DATA2,
+				['value' => ARRAY_DATA_VALUE, 'label' => __( 'ArrayDataLabel', 'woocommerce-plugin-domain' ) ],
+			]
+		];
+	}
+}
+```
+
+
 ## FE Block Payment Method Script
 
-The base JS module for your gateway block integration. The core of this module is a JS object that defines a set of options specific to your payment method which is passed to Woo’s FE Block Registry via their `registerPaymentMethod()` function.
+This is the base JS module for your gateway block integration that you registered in the `initialize()` method of your `Gateway_Checkout_Block_Integration` concrete class. Woo handles enqueuing these scripts in their `\Blocks\Payments\API` class ([code](https://github.com/woocommerce/woocommerce-blocks/blob/trunk/src/Payments/Api.php)). 
+
+The core of this module is a JS object that defines a set of options specific to your payment method which is passed to Woo’s FE Block Registry via their `registerPaymentMethod()` function.
 
 ```js
 import { registerPaymentMethod } from '@woocommerce/blocks-registry';
 
-const AuthorizeNetCIMCreditCardGateway = {
+const ExampleCreditCardGateway = {
 	name: 'my_payment_method',
 	content: <Content />,
 	edit: <Description />,
 	canMakePayment: () => true,
 	label: settings.title,
 	ariaLabel: settings.title,
-	placeOrderButtonLabel: __( 'Continue', 'woocommerce-gateway-authorize-net-cim' ),
+	placeOrderButtonLabel: __( 'Continue', 'woocommerce-plugin-domain' ),
 	supports: {
 		features: settings.supports,
 	},
 };
 
-registerPaymentMethod(AuthorizeNetCIMCreditCardGateway);
+registerPaymentMethod(ExampleCreditCardGateway);
 ```
 
 ## Payment Method Components
