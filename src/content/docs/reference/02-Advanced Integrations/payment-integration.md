@@ -3,15 +3,40 @@ title: Payment Method Integration
 description: A guided summary of our approach to WC Cart/Checkout block integration.
 ---
 
-## Payment Method Integration
-
 Woo has implemented their own abstract class and several registration/integration methods specifically to help streamline payment method integration with their blocks.  
 
 ### Declaring plugin block compat
 
-Gateway plugins still need to declare block compatibility at the plugin level (same as other block integrations). We can use the same FW methods for this in `Blocks_Handler.php` [(code)](https://github.com/godaddy-wordpress/wc-plugin-framework/blob/release/cart-checkout-blocks-support/woocommerce/Blocks/Blocks_Handler.php).
+Gateway plugins still need to declare block compatibility at the plugin level (same as other block integrations). The FW helper methods for this in `Blocks_Handler.php` [(code)](https://github.com/godaddy-wordpress/wc-plugin-framework/blob/release/cart-checkout-blocks-support/woocommerce/Blocks/Blocks_Handler.php) read from the plugin's `'supported-features'` array to check for compatibility. This is best declared in the plugin's constructor function, e.g.:
 
-[ Code example of declaration (I think this is just the new plugin constructor args?) ]
+```php
+	public function __construct() {
+
+		parent::__construct(
+			self::PLUGIN_ID,
+			self::VERSION,
+			[
+				'text_domain'        => 'woocommerce-gateway-plugin-domain',
+				'gateways'           => $this->get_enabled_gateways(),
+				'require_ssl'        => true,
+				'supports'           => [
+					self::FEATURE_CAPTURE_CHARGE,
+					self::FEATURE_MY_PAYMENT_METHODS,
+					self::FEATURE_CUSTOMER_ID,
+				],
+				'supported_features' => [
+					'hpos'   => true,
+					'blocks' => [
+						'checkout' => true,
+					]
+				],
+			]
+		);
+```
+
+:::note
+WooCommerce Payment Methods declare their own set of supported gateway features under the `'supports'` key. Our plugin framework's supported WooCommerce features are declared under `'supported_features'`.
+:::
 
 ### BE PaymentMethodRegistry
 
@@ -53,7 +78,3 @@ registerPaymentMethod(AuthorizeNetCIMCreditCardGateway);
 In the Block Registry options, Woo allows us to define two base nodes, `content` and `edit` , that will be cloned and rendered in the frontend and admin editor respectively. Those nodes will contain all of the UI and logic needed for customers to enter and submit payment details (in `content`) and for merchants to preview the checkout experience in the admin editor (in `edit`).
 
 [ More here on Simon & Alex’s proposed component architecture ]
-
-## Data Integration
-
-## Third-Party Integrations
