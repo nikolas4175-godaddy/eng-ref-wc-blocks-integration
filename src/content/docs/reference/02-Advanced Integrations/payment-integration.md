@@ -82,7 +82,7 @@ class Credit_Card_Checkout_Block_Integration extends Gateway_Checkout_Block_Inte
 	 *
 	 * @return void
 	 */
-	public function initialize() {
+	public function initialize() : void {
 
 		// register the base checkout block JS for this gateway
 		wp_register_script(
@@ -158,6 +158,10 @@ const ExampleCreditCardGateway = {
 
 registerPaymentMethod(ExampleCreditCardGateway);
 ```
+
+:::note
+The `name` property used to register with the frontend **must match** the name set in the backend `PaymentMethodRegistry`. For our FW payment methods, this will default to the payment gateway ID, e.g. `'authorize_net_cim_credit_card'`.
+:::
 
 ## Payment Method Components
 
