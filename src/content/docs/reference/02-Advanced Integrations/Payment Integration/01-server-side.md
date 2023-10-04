@@ -1,42 +1,7 @@
 ---
-title: Payment Method Integration
-description: A guided summary of our approach to WC Cart/Checkout block integration.
+title: Payment Method Integration - Server Side
+description: The backend/PHP portion of our payment method integrations
 ---
-
-Woo has implemented their own abstract class and several registration/integration methods specifically to help streamline payment method integration with their blocks.  
-
-## Declaring plugin block compatibility
-
-Gateway plugins still need to declare block compatibility at the plugin level (same as other block integrations). The FW helper methods for this in `Blocks_Handler.php` ([code](https://github.com/godaddy-wordpress/wc-plugin-framework/blob/release/cart-checkout-blocks-support/woocommerce/Blocks/Blocks_Handler.php)) will read from the plugin's `'supported-features'` array to check for compatibility. This is best declared in the plugin's constructor function, e.g.:
-
-```php
-	public function __construct() {
-
-		parent::__construct(
-			self::PLUGIN_ID,
-			self::VERSION,
-			[
-				'text_domain'        => 'woocommerce-gateway-plugin-domain',
-				'gateways'           => $this->get_enabled_gateways(),
-				'require_ssl'        => true,
-				'supports'           => [
-					self::FEATURE_CAPTURE_CHARGE,
-					self::FEATURE_MY_PAYMENT_METHODS,
-					self::FEATURE_CUSTOMER_ID,
-				],
-				'supported_features' => [
-					'hpos'   => true,
-					'blocks' => [
-						'checkout' => true,
-					]
-				],
-			]
-		);
-```
-
-:::note
-Payment Methods in WooCommerce declare their own set of supported gateway-specific features under the `'supports'` key. Our plugin framework's supported WooCommerce features are declared under `'supported_features'`.
-:::
 
 ## Back-End `PaymentMethodRegistry`
 
@@ -132,39 +97,3 @@ class Credit_Card_Checkout_Block_Integration extends Gateway_Checkout_Block_Inte
 	}
 }
 ```
-
-
-## FE Block Payment Method Script
-
-This is the base JS module for your gateway block integration that you registered in the `initialize()` method of your `Gateway_Checkout_Block_Integration` concrete class. Woo handles enqueuing these scripts in their `\Blocks\Payments\API` class ([code](https://github.com/woocommerce/woocommerce-blocks/blob/trunk/src/Payments/Api.php)). 
-
-The core of this module is a JS object that defines a set of options specific to your payment method which is passed to Woo’s FE Block Registry via their `registerPaymentMethod()` function.
-
-```js
-import { registerPaymentMethod } from '@woocommerce/blocks-registry';
-
-const ExampleCreditCardGateway = {
-	name: 'my_payment_method',
-	content: <Content />,
-	edit: <Description />,
-	canMakePayment: () => true,
-	label: settings.title,
-	ariaLabel: settings.title,
-	placeOrderButtonLabel: __( 'Continue', 'woocommerce-plugin-domain' ),
-	supports: {
-		features: settings.supports,
-	},
-};
-
-registerPaymentMethod(ExampleCreditCardGateway);
-```
-
-:::note
-The `name` property used to register with the frontend **must match** the name set in the backend `PaymentMethodRegistry`. For our FW payment methods, this will default to the payment gateway ID, e.g. `'authorize_net_cim_credit_card'`.
-:::
-
-## Payment Method Components
-
-In the Block Registry options, Woo allows us to define two base nodes, `content` and `edit` , that will be cloned and rendered in the frontend and admin editor respectively. Those nodes will contain all of the UI and logic needed for customers to enter and submit payment details (in `content`) and for merchants to preview the checkout experience in the admin editor (in `edit`).
-
-[ More here on Simon & Alex’s proposed component architecture ]
