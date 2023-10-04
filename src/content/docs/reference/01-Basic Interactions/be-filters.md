@@ -1,4 +1,4 @@
 ---
-title: Backend Filters
-description: A guided summary of our approach to WC Cart/Checkout block integration.
+title: Backend Hooks
+description: Hooks fired by Woo during the Blocks Checkout process
 ---
