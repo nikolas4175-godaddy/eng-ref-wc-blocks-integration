@@ -3,6 +3,8 @@ title: Payment Method Integration - Server Side
 description: The backend/PHP portion of our payment method integrations
 ---
 
+Once compatibility has been declared for the plugin, we can begin with registering individual gateways on the backend.
+
 ## Back-End `PaymentMethodRegistry`
 
 Woo handles block-compatible payment methods in their `PaymentMethodRegistry` ([code](https://github.com/woocommerce/woocommerce-blocks/blob/trunk/src/Payments/PaymentMethodRegistry.php)), so individual gateways (your plugin might have more than one) will need to add themselves to this registry. We have FW helper methods for this level of integration in `Gateway_Blocks_Handler.php` ([code](https://github.com/godaddy-wordpress/wc-plugin-framework/blob/release/cart-checkout-blocks-support/woocommerce/payment-gateway/Blocks/Gateway_Blocks_Handler.php)). Our registration method will call `get_checkout_block_integration_instance()` on the integrating gateway class, which should return your `Gateway_Checkout_Block_Integration` instance (more on this in the next step).
@@ -57,6 +59,7 @@ class Credit_Card_Checkout_Block_Integration extends Gateway_Checkout_Block_Inte
 				'wc-blocks-registry',
 				'wc-settings',
 				'wp-element',
+				'wp-components',
 				'wp-html-entities',
 				'wp-i18n',
 			],
@@ -82,7 +85,7 @@ class Credit_Card_Checkout_Block_Integration extends Gateway_Checkout_Block_Inte
 	 *
 	 * @return array<string, string>
 	 */
-	public function get_script_data() : array {
+	public function get_payment_method_data() : array {
 
 		return [
 			'title'       => $this->gateway->method_title,

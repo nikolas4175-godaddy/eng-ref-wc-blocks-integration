@@ -37,9 +37,3 @@ Gateway plugins still need to declare block compatibility at the plugin level (s
 :::note
 Payment Methods in WooCommerce declare their own set of supported gateway-specific features under the `'supports'` key. Our plugin framework's supported WooCommerce features are declared under `'supported_features'`.
 :::
-
-<LinkCard
-title="Payment Integration - Server Side"
-description=""
-href="/reference/02-advanced-integrations/payment-integration/server-side.md"
-/>
