@@ -29,6 +29,9 @@ wp-plugin-frontend monorepo
 The monorepo structure will be used in dev and will house our shared FE code going forward, but FE integrations will ultimately be packaged and built with their respective plugin code. That structure is TBD.
 :::
 
+
+[ TODO: refactor below sections to match our existing setup (`app.tsx` + `block-checkout.tsx`) ]
+
 ## FE Block Payment Method Script
 
 This is the base JS module for your gateway block integration that you registered in the `initialize()` method of your `Gateway_Checkout_Block_Integration` concrete class. Woo handles enqueuing these scripts in their `\Blocks\Payments\API` class ([code](https://github.com/woocommerce/woocommerce-blocks/blob/trunk/src/Payments/Api.php)). 
@@ -123,4 +126,4 @@ registerPaymentMethod({
 ```
 
 
-[ More here on Simon & Alex’s proposed component architecture ]
+[ More here on implementation paths, creating component exports, etc. ]
