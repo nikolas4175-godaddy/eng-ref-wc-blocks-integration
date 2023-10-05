@@ -77,53 +77,25 @@ The `name` property used to register with the frontend **must match** the name s
 
 ## Payment Method Components
 
-In the Block Registry options, Woo allows us to define two base nodes, `content` and `edit` , that will be cloned and rendered in the frontend and admin editor respectively. Those nodes will contain all of the UI and logic needed for customers to enter and submit payment details (in `content`) and for merchants to preview the checkout experience in the admin editor (in `edit`). Since we're using React Query to [do something cool I'm sure], we wrap these components in `QueryClientProvider`s, resulting in something like this:
+In the Block Registry options, Woo allows us to define two base nodes, `content` and `edit` , that will be cloned and rendered in the frontend and admin editor respectively. Those nodes will contain all of the UI and logic needed for customers to enter and submit payment details (in `content`) and for merchants to preview the checkout experience in the admin editor (in `edit`).
 
 ```js
 // app.tsx
 import { registerPaymentMethod } from '@gdcorp-partners/woocommerce'
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
-import { ReactQueryDevtools } from '@tanstack/react-query-devtools'
 import {
 	BlockCheckout,
 	BlockCheckoutDescription,
 	blockCheckoutSettings,
 } from './components/block-checkout/block-checkout'
 
-const queryClient = new QueryClient({
-	defaultOptions: {
-		queries: {
-			staleTime: 3000,
-			retry: 3,
-		},
-	},
-})
-
-function Providers({ children }) {
-	return (
-		<QueryClientProvider client={queryClient}>
-			{children}
-			<ReactQueryDevtools initialIsOpen={false} />
-		</QueryClientProvider>
-	)
-}
-
 registerPaymentMethod({
 	name: 'my_payment_method',
 	label: label,
-	content: (
-		<Providers>
-			<BlockCheckout />
-		</Providers>
-	),
-	edit: (
-		<Providers>
-			<BlockCheckoutDescription />
-		</Providers>
-	),
+	content: <BlockCheckout />,
+	edit: <BlockCheckoutDescription />,
 	// [...]
-};
+});
 ```
 
 
-[ More here on implementation paths, creating component exports, etc. ]
+[ More here on implementation paths, creating component exports, other rPM options, etc. ]

@@ -1,6 +1,6 @@
 ---
 title: Payment Integration
-description: A guided summary of our approach to WC Cart/Checkout block integration.
+description: A summary of our approach to WC Cart/Checkout block integration.
 ---
 
 Woo has implemented their own abstract class and several registration/integration methods specifically to help streamline payment method integration with their Cart and Checkout blocks.  
