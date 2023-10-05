@@ -65,6 +65,9 @@ public function get_payment_method_data() : array {
 ## 2) Consuming data in block checkout script
 We can use our wrapped version of Woo's `getSetting` function to access this same data in our frontend script. Following the above example, our `getSetting()` call would look like:
 ```js
+import { getSetting } from '@gdcorp-partners/woocommerce'
+import { PluginSettings } from '@/types/types'
+
 /**
  * Consume payment method data exposed by `get_payment_method_data()` in the backend integration class
  * 
